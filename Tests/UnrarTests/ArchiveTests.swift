@@ -11,7 +11,8 @@ final class ArchiveTests: XCTestCase {
             XCTFail()
             return
         }
-        XCTAssertNil(Archive(path: path + ".not.exists"))
+        let archive = Archive(path: path + ".not.exists")
+        XCTAssertThrowsError(try archive.entries())
     }
 
     func testExample() throws {
@@ -21,7 +22,7 @@ final class ArchiveTests: XCTestCase {
         }
         let archive = Archive(path: path)
         XCTAssertNotNil(archive)
-        let entries = try archive!.entries()
+        let entries = try archive.entries()
         XCTAssertEqual(entries.count, 1)
         XCTAssertEqual(entries[0].fileName, "README.md")
         XCTAssertEqual(entries[0].uncompressedSize, 40)
@@ -34,8 +35,10 @@ final class ArchiveTests: XCTestCase {
         }
         let archive = Archive(path: path)
         XCTAssertNotNil(archive)
-        let entries = try archive!.entries()
-        try archive?.extract(entries[0])
+        let entries = try archive.entries()
+        try archive.extract(entries[0]) { data in
+
+        }
     }
 
     func testMultibyteArchive() throws {
@@ -45,7 +48,7 @@ final class ArchiveTests: XCTestCase {
         }
         let archive = Archive(path: path)
         XCTAssertNotNil(archive)
-        let entries = try archive!.entries()
+        let entries = try archive.entries()
         XCTAssertEqual(entries.count, 4)
     }
 
