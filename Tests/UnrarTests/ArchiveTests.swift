@@ -23,6 +23,19 @@ final class ArchiveTests: XCTestCase {
         XCTAssertNotNil(archive)
         let entries = try archive!.entries()
         XCTAssertEqual(entries.count, 1)
+        XCTAssertEqual(entries[0].fileName, "README.md")
+        XCTAssertEqual(entries[0].uncompressedSize, 40)
+    }
+
+    func testExtract() throws {
+        guard let path = Bundle.module.path(forResource: "test", ofType: "rar") else {
+            XCTFail()
+            return
+        }
+        let archive = Archive(path: path)
+        XCTAssertNotNil(archive)
+        let entries = try archive!.entries()
+        try archive?.extract(entries[0])
     }
 
     func testMultibyteArchive() throws {
@@ -33,7 +46,7 @@ final class ArchiveTests: XCTestCase {
         let archive = Archive(path: path)
         XCTAssertNotNil(archive)
         let entries = try archive!.entries()
-        XCTAssertEqual(entries.count, 1)
+        XCTAssertEqual(entries.count, 4)
     }
 
     static var allTests = [
