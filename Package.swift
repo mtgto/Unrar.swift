@@ -45,7 +45,8 @@ let package = Package(
                 "list.cpp", "find.cpp", "unpack.cpp", "headers.cpp", "threadpool.cpp", "rs16.cpp", "cmddata.cpp", "ui.cpp",
             ],
             cSettings: [
-                .define("RARDLL")
+                .define("RARDLL"),
+                .unsafeFlags(["-Wno-dangling-else", "-Wno-switch"]),
             ]
         ),
         .testTarget(

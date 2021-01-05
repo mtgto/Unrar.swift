@@ -4,12 +4,6 @@
 import Cunrar
 import Foundation
 
-public enum OpenMode {
-    case list  // RAR_OM_LIST
-    case extract  // RAR_OM_EXTRACT
-    case listIncSplit  // RAR_OM_LIST_INCSPLIT
-}
-
 public class Archive {
     private let path: String
     private let password: String?
@@ -50,23 +44,39 @@ public class Archive {
     }
 
     class Callback {
-        let callback: (Data) -> Void
+        let callback: (Data, Progress) -> Void
+        let progress: Progress
 
-        init(_ callback: @escaping (Data) -> Void) {
+        init(_ uncompressedSize: UInt64, _ callback: @escaping (Data, Progress) -> Void) {
             self.callback = callback
+            self.progress = Progress(totalUnitCount: Int64(uncompressedSize))
         }
     }
 
-    public func extract(_ entry: Entry, handler: @escaping (Data) -> Void) throws {
-        let handlerPointer = Unmanaged<Callback>.passRetained(Callback(handler)).toOpaque()
+    public func extract(_ entry: Entry, handler: @escaping (Data, Progress) -> Void) throws {
+        if entry.uncompressedSize == 0 {
+            let progress = Progress(totalUnitCount: 1)
+            progress.completedUnitCount = 1
+            handler(Data(), progress)
+            return
+        }
+        let handlerPointer = Unmanaged<Callback>.passRetained(Callback(entry.uncompressedSize, handler)).toOpaque()
         let callback: UNRARCALLBACK = { msg, userData, p1, p2 in
-            guard let mySelfPtr = UnsafeRawPointer(bitPattern: userData) else {
-                return 0
-            }
-            let handler = Unmanaged<Callback>.fromOpaque(mySelfPtr).takeUnretainedValue()
-            if let ptr = UnsafeRawPointer(bitPattern: p1) {
-                let data = Data(bytes: ptr, count: p2)
-                handler.callback(data)
+            if msg == UCM_PROCESSDATA.rawValue {
+                guard let mySelfPtr = UnsafeRawPointer(bitPattern: userData) else {
+                    return 0
+                }
+                let handler = Unmanaged<Callback>.fromOpaque(mySelfPtr).takeUnretainedValue()
+                if let ptr = UnsafeRawPointer(bitPattern: p1) {
+                    let data = Data(bytes: ptr, count: p2)
+                    handler.progress.completedUnitCount += Int64(p2)
+                    handler.callback(data, handler.progress)
+                    if handler.progress.isCancelled {
+                        return -1
+                    }
+                }
+            } else {
+                print("msg: ", msg)
             }
             return 0
         }
@@ -88,11 +98,12 @@ public class Archive {
                 // compare fileName
                 if Entry(header) == entry {
                     RARSetCallback(data, callback, Int(bitPattern: OpaquePointer(handlerPointer)))
-                    RARProcessFile(data, RAR_TEST, nil, nil)
+                    RARProcessFile(data, RAR_EXTRACT, nil, nil)
                     RARSetCallback(data, nil, 0)
+                    break loop
                 }
-                break loop
             case ERAR_END_ARCHIVE:
+                // Not found
                 break loop
             default:
                 throw UnrarError.fromErrorCode(result)
