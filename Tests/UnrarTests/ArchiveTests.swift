@@ -12,7 +12,14 @@ final class ArchiveTests: XCTestCase {
             return
         }
         let archive = Archive(path: path + ".not.exists")
-        XCTAssertThrowsError(try archive.entries())
+        do {
+            _ = try archive.entries()
+            XCTFail()
+        } catch UnrarError.badArchive {
+            // ok
+        } catch {
+            XCTFail()
+        }
     }
 
     func testExample() throws {
@@ -26,6 +33,37 @@ final class ArchiveTests: XCTestCase {
         XCTAssertEqual(entries.count, 1)
         XCTAssertEqual(entries[0].fileName, "README.md")
         XCTAssertEqual(entries[0].uncompressedSize, 40)
+    }
+
+    func testEntriesFromEncryptedArchive() throws {
+        guard let path = Bundle.module.path(forResource: "encrypted", ofType: "rar") else {
+            XCTFail()
+            return
+        }
+        let archive = Archive(path: path)
+        XCTAssertNotNil(archive)
+        let entries = try archive.entries()
+        XCTAssertEqual(entries.count, 2)
+    }
+
+    func testEntriesFromWholeEncryptedArchive() throws {
+        guard let path = Bundle.module.path(forResource: "encrypted-header", ofType: "rar") else {
+            XCTFail()
+            return
+        }
+        let archive = Archive(path: path)
+        XCTAssertNotNil(archive)
+        do {
+            _ = try archive.entries()
+            XCTFail()
+        } catch UnrarError.missingPassword {
+            // ok
+        } catch {
+            XCTFail()
+        }
+        let archive2 = Archive(path: path, password: "password")
+        let entries = try archive2.entries()
+        XCTAssertEqual(entries.count, 2)
     }
 
     func testExtract() throws {
@@ -54,7 +92,7 @@ final class ArchiveTests: XCTestCase {
         XCTAssertEqual(entries.count, 4)
     }
 
-    func testExtractEncrypted() throws {
+    func testExtractEncryptedWithoutPassword() throws {
         guard let path = Bundle.module.path(forResource: "encrypted", ofType: "rar") else {
             XCTFail()
             return
@@ -62,11 +100,30 @@ final class ArchiveTests: XCTestCase {
         let archive = Archive(path: path)
         XCTAssertNotNil(archive)
         let entries = try archive.entries()
+        do {
+            try archive.extract(entries[0]) { _, _ in
+                XCTFail()
+            }
+        } catch UnrarError.missingPassword {
+            // ok
+        } catch {
+            XCTFail()
+        }
+    }
+
+    func testExtractEncryptedWithPassword() throws {
+        guard let path = Bundle.module.path(forResource: "encrypted", ofType: "rar") else {
+            XCTFail()
+            return
+        }
+        let archive = Archive(path: path, password: "password")
+        XCTAssertNotNil(archive)
+        let entries = try archive.entries()
         var data: Data = Data()
         try archive.extract(entries[0]) { receivedData, progress in
             data.append(receivedData)
         }
-        XCTAssertEqual(data.count, 40)
+        XCTAssertEqual(data.count, 241)
     }
 
     static var allTests = [

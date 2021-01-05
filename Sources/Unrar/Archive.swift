@@ -4,6 +4,7 @@
 import Cunrar
 import Foundation
 
+/// NOTE: This class is not thread safe
 public class Archive {
     private let path: String
     private let password: String?
@@ -111,10 +112,24 @@ public class Archive {
         } while RARProcessFile(data, RAR_SKIP, nil, nil) == ERAR_SUCCESS
     }
 
+    public func extract(_ entry: Entry) throws -> Data {
+        var fullData = Data(capacity: Int(entry.uncompressedSize))
+        try self.extract(entry) { (data, progress) in
+            fullData.append(data)
+        }
+        return fullData
+    }
+
     private func open(flags: inout RAROpenArchiveDataEx) -> UnsafeMutableRawPointer? {
-        return self.path.utf8CString.withUnsafeBufferPointer({ (ptr) -> UnsafeMutableRawPointer? in
+        let ptr = self.path.utf8CString.withUnsafeBufferPointer({ (ptr) -> UnsafeMutableRawPointer? in
             flags.ArcName = UnsafeMutablePointer(mutating: ptr.baseAddress)
             return UnsafeMutableRawPointer(RAROpenArchiveEx(&flags))
         })
+        if let password = self.password {
+            password.utf8CString.withUnsafeBufferPointer({ (passwordPtr) -> Void in
+                RARSetPassword(ptr, UnsafeMutablePointer(mutating: passwordPtr.baseAddress))
+            })
+        }
+        return ptr
     }
 }
