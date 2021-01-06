@@ -10,7 +10,7 @@ public enum UnrarError: Error {
     case unknownFormat
     case eopen
     case missingPassword
-    case hogehoge
+    case unknown
 
     static func fromErrorCode(_ errorCode: Int32) -> UnrarError {
         switch errorCode {
@@ -18,11 +18,17 @@ public enum UnrarError: Error {
             return UnrarError.noMemory
         case ERAR_BAD_DATA:
             return UnrarError.badData
+        case ERAR_BAD_ARCHIVE:
+            return UnrarError.badArchive
+        case ERAR_UNKNOWN_FORMAT:
+            return UnrarError.unknownFormat
+        case ERAR_EOPEN:
+            return UnrarError.eopen
         case ERAR_MISSING_PASSWORD:
             return UnrarError.missingPassword
         default:
             print("Error:", errorCode)
-            return UnrarError.hogehoge
+            return UnrarError.unknown
         }
     }
 }

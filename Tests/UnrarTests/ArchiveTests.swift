@@ -22,7 +22,7 @@ final class ArchiveTests: XCTestCase {
         }
     }
 
-    func testExample() throws {
+    func testEntries() throws {
         guard let path = Bundle.module.path(forResource: "test", ofType: "rar") else {
             XCTFail()
             return
@@ -82,7 +82,7 @@ final class ArchiveTests: XCTestCase {
     }
 
     func testMultibyteArchive() throws {
-        guard let path = Bundle.module.path(forResource: "multibyte.v4", ofType: "rar") else {
+        guard let path = Bundle.module.path(forResource: "multibyte.v4.utf16", ofType: "rar") else {
             XCTFail()
             return
         }
@@ -90,6 +90,7 @@ final class ArchiveTests: XCTestCase {
         XCTAssertNotNil(archive)
         let entries = try archive.entries()
         XCTAssertEqual(entries.count, 4)
+        XCTAssertTrue(entries.contains(where: { $0.fileName == "アーカイブ/フォルダ/サンプル.txt" && !$0.encrypted }))
     }
 
     func testExtractEncryptedWithoutPassword() throws {
@@ -127,6 +128,13 @@ final class ArchiveTests: XCTestCase {
     }
 
     static var allTests = [
-        ("testExample", testExample)
+        ("testOpenNotExistsArchive", testOpenNotExistsArchive),
+        ("testEntries", testEntries),
+        ("testEntriesFromEncryptedArchive", testEntriesFromEncryptedArchive),
+        ("testEntriesFromWholeEncryptedArchive", testEntriesFromWholeEncryptedArchive),
+        ("testExtract", testExtract),
+        ("testMultibyteArchive", testMultibyteArchive),
+        ("testExtractEncryptedWithoutPassword", testExtractEncryptedWithoutPassword),
+        ("testExtractEncryptedWithPassword", testExtractEncryptedWithPassword),
     ]
 }

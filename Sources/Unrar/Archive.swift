@@ -14,6 +14,11 @@ public class Archive {
         self.password = password
     }
 
+    public init(fileURL: URL, password: String? = nil) {
+        self.path = fileURL.path
+        self.password = password
+    }
+
     public func entries() throws -> [Entry] {
         var entries: [Entry] = []
         var flags = RAROpenArchiveDataEx()
@@ -99,8 +104,11 @@ public class Archive {
                 // compare fileName
                 if Entry(header) == entry {
                     RARSetCallback(data, callback, Int(bitPattern: OpaquePointer(handlerPointer)))
-                    RARProcessFile(data, RAR_EXTRACT, nil, nil)
+                    let result = RARProcessFile(data, RAR_EXTRACT, nil, nil)
                     RARSetCallback(data, nil, 0)
+                    if result != ERAR_SUCCESS {
+                        throw UnrarError.fromErrorCode(result)
+                    }
                     break loop
                 }
             case ERAR_END_ARCHIVE:
@@ -117,7 +125,11 @@ public class Archive {
         try self.extract(entry) { (data, progress) in
             fullData.append(data)
         }
-        return fullData
+        if fullData.count == entry.uncompressedSize {
+            return fullData
+        } else {
+            throw UnrarError.unknown
+        }
     }
 
     private func open(flags: inout RAROpenArchiveDataEx) -> UnsafeMutableRawPointer? {
