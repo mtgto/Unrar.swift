@@ -2,7 +2,7 @@
 
 ![Swift](https://github.com/mtgto/Unrar.swift/workflows/Swift/badge.svg)
 
-Swift library which wraps unrar C++ library, provided by [rarlib](https://www.rarlab.com/rar_add.htm).
+Swift library wraps unrar C++ library provided by [rarlib](https://www.rarlab.com/rar_add.htm).
 
 ## Feature
 
@@ -18,7 +18,7 @@ import Unrar
 
 let archive = Archive(filePath: "/path/to/archive.rar")
 let entries = try archive.entries()
-let extractedData = archive.extract(entries[0])
+let extractedData = try archive.extract(entries[0])
 ```
 
 ## Installation
@@ -34,5 +34,6 @@ Add `https://github.com/mtgto/Unrar.swift` to your Package.swift.
 
 ## License
 
-Swift parts of this software is released under the MIT License, see `LICENSE.txt` .
-C++ library has different license. See `Sources/Cunrar/readme.txt` .
+Swift parts of this software is released under the MIT License, see [LICENSE.txt](LICENSE.txt).
+
+C++ library has different license. See [Sources/Cunrar/readme.txt](Sources/Cunrar/readme.txt).
