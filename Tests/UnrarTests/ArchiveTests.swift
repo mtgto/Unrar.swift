@@ -82,7 +82,7 @@ final class ArchiveTests: XCTestCase {
     }
 
     func testMultibyteArchive() throws {
-        guard let path = Bundle.module.path(forResource: "multibyte.v4.utf16", ofType: "rar") else {
+        guard let path = Bundle.module.path(forResource: "multibyte.v4", ofType: "rar") else {
             XCTFail()
             return
         }
