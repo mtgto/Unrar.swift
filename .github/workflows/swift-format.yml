@@ -20,6 +20,6 @@ jobs:
           # Please comment out if you won't specify configuration file
           configuration_file: .swift-format
           # default is false
-          all_files: false
+          all_files: true
           # default is -1 (infinity)
           max_warnings: -1
