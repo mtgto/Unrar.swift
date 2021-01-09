@@ -33,6 +33,7 @@ final class ArchiveTests: XCTestCase {
         XCTAssertEqual(entries.count, 1)
         XCTAssertEqual(entries[0].fileName, "README.md")
         XCTAssertEqual(entries[0].uncompressedSize, 40)
+        XCTAssertEqual(entries[0].modified, Date(timeIntervalSince1970: 1_609_644_822))
     }
 
     func testEntriesFromEncryptedArchive() throws {
@@ -91,6 +92,7 @@ final class ArchiveTests: XCTestCase {
         let entries = try archive.entries()
         XCTAssertEqual(entries.count, 4)
         XCTAssertTrue(entries.contains(where: { $0.fileName == "アーカイブ/フォルダ/サンプル.txt" && !$0.encrypted }))
+        XCTAssertTrue(entries.contains(where: { $0.fileName == "アーカイブ/サンプル.txt" && !$0.encrypted }))
     }
 
     func testExtractEncryptedWithoutPassword() throws {

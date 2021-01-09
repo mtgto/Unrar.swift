@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import Cunrar
+import Foundation
 
 public struct Entry: Equatable {
     public let fileName: String  // path
@@ -9,18 +10,23 @@ public struct Entry: Equatable {
     public let compressedSize: UInt64
     public let encrypted: Bool
     public let directory: Bool
-    internal var header: RARHeaderDataEx
+    public let modified: Date
 
     init(_ header: RARHeaderDataEx) {
-        self.header = header
-        self.fileName = String(cString: &self.header.FileName.0)
-        self.uncompressedSize = UInt64(self.header.UnpSizeHigh) << 32 | UInt64(self.header.UnpSize)
-        self.compressedSize = UInt64(self.header.PackSizeHigh) << 32 | UInt64(self.header.PackSize)
-        self.encrypted = self.header.Flags & UInt32(RHDF_ENCRYPTED) != 0
-        self.directory = self.header.Flags & UInt32(RHDF_DIRECTORY) != 0
+        var _header: RARHeaderDataEx = header
+        self.fileName = String(cString: &_header.FileName.0)
+        self.uncompressedSize = UInt64(header.UnpSizeHigh) << 32 | UInt64(header.UnpSize)
+        self.compressedSize = UInt64(header.PackSizeHigh) << 32 | UInt64(header.PackSize)
+        self.encrypted = header.Flags & UInt32(RHDF_ENCRYPTED) != 0
+        self.directory = header.Flags & UInt32(RHDF_DIRECTORY) != 0
+        self.modified = Entry.date(from: UInt64(header.MtimeHigh) << 32 | UInt64(header.MtimeLow))
     }
 
     public static func == (lhs: Entry, rhs: Entry) -> Bool {
         return lhs.fileName == rhs.fileName
+    }
+
+    private static func date(from time: UInt64) -> Date {
+        return Date(timeIntervalSince1970: TimeInterval(time / 10_000_000 - 11_644_473_600))
     }
 }

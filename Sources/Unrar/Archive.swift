@@ -68,7 +68,8 @@ public class Archive {
         }
         let handlerPointer = Unmanaged<Callback>.passRetained(Callback(entry.uncompressedSize, handler)).toOpaque()
         let callback: UNRARCALLBACK = { msg, userData, p1, p2 in
-            if msg == UCM_PROCESSDATA.rawValue {
+            switch msg {
+            case UCM_PROCESSDATA.rawValue:
                 guard let mySelfPtr = UnsafeRawPointer(bitPattern: userData) else {
                     return 0
                 }
@@ -81,8 +82,12 @@ public class Archive {
                         return -1
                     }
                 }
-            } else {
-                print("msg: ", msg)
+            case UCM_NEEDPASSWORD.rawValue, UCM_NEEDPASSWORDW.rawValue:
+                // TODO ?
+                break
+            default:
+                // TODO error handling
+                break
             }
             return 0
         }
