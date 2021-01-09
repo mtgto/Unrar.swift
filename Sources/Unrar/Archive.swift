@@ -4,7 +4,7 @@
 import Cunrar
 import Foundation
 
-/// NOTE: This class is not thread safe
+// NOTE: This class is not thread safe.
 public class Archive {
     private let path: String
     private let password: String?
