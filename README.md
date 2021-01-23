@@ -1,6 +1,7 @@
 # Unrar
 
-![Swift](https://github.com/mtgto/Unrar.swift/workflows/Swift/badge.svg)
+[![Swift](https://github.com/mtgto/Unrar.swift/workflows/Swift/badge.svg)](https://github.com/mtgto/Unrar.swift/actions?query=workflow%3ASwift)
+[![swift-format](https://github.com/mtgto/Unrar.swift/workflows/swift-format/badge.svg)](https://github.com/mtgto/Unrar.swift/actions?query=workflow%3Aswift-format)
 
 Swift library wraps unrar C++ library provided by [rarlib](https://www.rarlab.com/rar_add.htm).
 

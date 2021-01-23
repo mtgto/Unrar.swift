@@ -1,3 +1,5 @@
+name: swift-format
+
 on:
   push:
     branches: [main]
