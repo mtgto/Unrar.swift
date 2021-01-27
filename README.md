@@ -7,10 +7,13 @@ Swift library wraps unrar C++ library provided by [rarlib](https://www.rarlab.co
 
 ## Feature
 
-- [x] List entries of archive
-- [x] Extract to memory
-- [x] Encrypted by password
-- [ ] Extract to file
+- [x] Supported
+  - [x] List entries of archive
+  - [x] Extract to memory
+  - [x] Encrypted by password
+- [ ] Unsupported
+  - [ ] Extract to file
+  - [ ] Multi-Volume
 
 ## Usage
 
