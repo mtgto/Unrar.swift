@@ -129,6 +129,57 @@ final class ArchiveTests: XCTestCase {
         XCTAssertEqual(data.count, 241)
     }
 
+    func testExtractBrokenHeader() throws {
+        guard let path = Bundle.module.path(forResource: "brokenheader", ofType: "rar") else {
+            XCTFail()
+            return
+        }
+        let archive = Archive(path: path)
+        XCTAssertNotNil(archive)
+
+        do {
+            _ = try archive.entries()
+            XCTFail("Broken header")
+        } catch UnrarError.badData {
+            // ok
+        } catch {
+            XCTFail()
+        }
+    }
+
+    func testExtractBadCRC() throws {
+        guard let path = Bundle.module.path(forResource: "badcrc", ofType: "rar") else {
+            XCTFail()
+            return
+        }
+        let archive = Archive(path: path)
+        XCTAssertNotNil(archive)
+        let entries = try archive.entries()
+        do {
+            _ = try archive.extract(entries[0])
+            XCTFail("Bad CRC")
+        } catch UnrarError.badData {
+            // ok
+        } catch {
+            XCTFail()
+        }
+    }
+
+    func testBlake2Hash() throws {
+        guard let path = Bundle.module.path(forResource: "blake2", ofType: "rar") else {
+            XCTFail()
+            return
+        }
+        let archive = Archive(path: path)
+        XCTAssertNotNil(archive)
+        let entries = try archive.entries()
+        var data: Data = Data()
+        try archive.extract(entries[0]) { receivedData, progress in
+            data.append(receivedData)
+        }
+        XCTAssertEqual(data.count, 1282)
+    }
+
     static var allTests = [
         ("testOpenNotExistsArchive", testOpenNotExistsArchive),
         ("testEntries", testEntries),
@@ -138,5 +189,8 @@ final class ArchiveTests: XCTestCase {
         ("testMultibyteArchive", testMultibyteArchive),
         ("testExtractEncryptedWithoutPassword", testExtractEncryptedWithoutPassword),
         ("testExtractEncryptedWithPassword", testExtractEncryptedWithPassword),
+        ("testExtractBrokenHeader", testExtractBrokenHeader),
+        ("testExtractBadCRC", testExtractBadCRC),
+        ("testBlake2Hash", testBlake2Hash),
     ]
 }
