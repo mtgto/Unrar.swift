@@ -45,7 +45,9 @@ let package = Package(
                 "list.cpp", "find.cpp", "unpack.cpp", "headers.cpp", "threadpool.cpp", "rs16.cpp", "cmddata.cpp", "ui.cpp",
             ],
             cSettings: [
-                .define("RARDLL")
+                .define("RARDLL"),
+                .define("_FILE_OFFSET_BITS", to: "64"),
+                .define("_LARGEFILE_SOURCE"),
             ]
         ),
         .testTarget(
