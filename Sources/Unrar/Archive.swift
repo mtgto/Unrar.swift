@@ -6,17 +6,39 @@ import Foundation
 
 // NOTE: This class is not thread safe.
 public class Archive {
-    private let path: String
-    private let password: String?
+    public let fileURL: URL
+    public let password: String?
+    public let isVolume: Bool
+    public let hasComment: Bool
+    public let isHeaderEncrypted: Bool
+    public let isFirstVolume: Bool
 
-    public init(path: String, password: String? = nil) {
-        self.path = path
-        self.password = password
+    public convenience init(path: String, password: String? = nil) throws {
+        try self.init(fileURL: URL(fileURLWithPath: path), password: password)
     }
 
-    public init(fileURL: URL, password: String? = nil) {
-        self.path = fileURL.path
+    public init(fileURL: URL, password: String? = nil) throws {
+        self.fileURL = fileURL
         self.password = password
+
+        var flags = RAROpenArchiveDataEx()
+        flags.OpenMode = UInt32(RAR_OM_LIST)
+        flags.CmtBuf = nil
+        flags.CmtBufSize = 0
+
+        guard let data = Archive.open(fileURL: fileURL, password: password, flags: &flags) else {
+            throw UnrarError.badArchive
+        }
+        defer {
+            RARCloseArchive(data)
+        }
+        if flags.OpenResult != ERAR_SUCCESS {
+            throw UnrarError.badArchive
+        }
+        self.isVolume = flags.Flags & UInt32(ROADF_VOLUME) != 0
+        self.hasComment = flags.Flags & UInt32(ROADF_COMMENT) != 0
+        self.isHeaderEncrypted = flags.Flags & UInt32(ROADF_ENCHEADERS) != 0
+        self.isFirstVolume = flags.Flags & UInt32(ROADF_FIRSTVOLUME) != 0
     }
 
     public func entries() throws -> [Entry] {
@@ -27,11 +49,14 @@ public class Archive {
         flags.CmtBufSize = 0
 
         var header = RARHeaderDataEx()
-        guard let data = self.open(flags: &flags) else {
+        guard let data = Archive.open(fileURL: self.fileURL, password: self.password, flags: &flags) else {
             throw UnrarError.badArchive
         }
         defer {
             RARCloseArchive(data)
+        }
+        if flags.OpenResult != ERAR_SUCCESS {
+            throw UnrarError.badArchive
         }
         loop: repeat {
             let result = RARReadHeaderEx(data, &header)
@@ -95,7 +120,7 @@ public class Archive {
         flags.CmtBuf = nil
         flags.CmtBufSize = 0
         var header = RARHeaderDataEx()
-        guard let data = self.open(flags: &flags) else {
+        guard let data = Archive.open(fileURL: self.fileURL, password: self.password, flags: &flags) else {
             throw UnrarError.badArchive
         }
         defer {
@@ -136,12 +161,12 @@ public class Archive {
         }
     }
 
-    private func open(flags: inout RAROpenArchiveDataEx) -> UnsafeMutableRawPointer? {
-        let ptr = self.path.utf8CString.withUnsafeBufferPointer({ (ptr) -> UnsafeMutableRawPointer? in
+    private static func open(fileURL: URL, password: String?, flags: inout RAROpenArchiveDataEx) -> UnsafeMutableRawPointer? {
+        let ptr = fileURL.path.utf8CString.withUnsafeBufferPointer({ (ptr) -> UnsafeMutableRawPointer? in
             flags.ArcName = UnsafeMutablePointer(mutating: ptr.baseAddress)
             return UnsafeMutableRawPointer(RAROpenArchiveEx(&flags))
         })
-        if let password = self.password {
+        if let password = password {
             password.utf8CString.withUnsafeBufferPointer({ (passwordPtr) -> Void in
                 RARSetPassword(ptr, UnsafeMutablePointer(mutating: passwordPtr.baseAddress))
             })

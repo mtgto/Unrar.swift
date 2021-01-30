@@ -11,9 +11,8 @@ final class ArchiveTests: XCTestCase {
             XCTFail()
             return
         }
-        let archive = Archive(path: path + ".not.exists")
         do {
-            _ = try archive.entries()
+            _ = try Archive(path: path + ".not.exists")
             XCTFail()
         } catch UnrarError.badArchive {
             // ok
@@ -27,8 +26,11 @@ final class ArchiveTests: XCTestCase {
             XCTFail()
             return
         }
-        let archive = Archive(path: path)
-        XCTAssertNotNil(archive)
+        let archive = try Archive(path: path)
+        XCTAssertFalse(archive.isVolume)
+        XCTAssertFalse(archive.hasComment)
+        XCTAssertFalse(archive.isHeaderEncrypted)
+        XCTAssertFalse(archive.isFirstVolume)
         let entries = try archive.entries()
         XCTAssertEqual(entries.count, 1)
         XCTAssertEqual(entries[0].fileName, "README.md")
@@ -41,8 +43,7 @@ final class ArchiveTests: XCTestCase {
             XCTFail()
             return
         }
-        let archive = Archive(path: path)
-        XCTAssertNotNil(archive)
+        let archive = try Archive(path: path)
         let entries = try archive.entries()
         XCTAssertEqual(entries.count, 2)
     }
@@ -52,8 +53,7 @@ final class ArchiveTests: XCTestCase {
             XCTFail()
             return
         }
-        let archive = Archive(path: path)
-        XCTAssertNotNil(archive)
+        let archive = try Archive(path: path)
         do {
             _ = try archive.entries()
             XCTFail()
@@ -62,7 +62,7 @@ final class ArchiveTests: XCTestCase {
         } catch {
             XCTFail()
         }
-        let archive2 = Archive(path: path, password: "password")
+        let archive2 = try Archive(path: path, password: "password")
         let entries = try archive2.entries()
         XCTAssertEqual(entries.count, 2)
     }
@@ -72,8 +72,7 @@ final class ArchiveTests: XCTestCase {
             XCTFail()
             return
         }
-        let archive = Archive(path: path)
-        XCTAssertNotNil(archive)
+        let archive = try Archive(path: path)
         let entries = try archive.entries()
         var data: Data = Data()
         try archive.extract(entries[0]) { receivedData, progress in
@@ -83,12 +82,24 @@ final class ArchiveTests: XCTestCase {
     }
 
     func testMultibyteArchive() throws {
+        guard let path = Bundle.module.path(forResource: "multibyte", ofType: "rar") else {
+            XCTFail()
+            return
+        }
+        let archive = try Archive(path: path)
+        XCTAssertTrue(archive.hasComment)
+        let entries = try archive.entries()
+        XCTAssertEqual(entries.count, 4)
+        XCTAssertTrue(entries.contains(where: { $0.fileName == "アーカイブ/フォルダ/サンプル.txt" && !$0.encrypted }))
+        XCTAssertTrue(entries.contains(where: { $0.fileName == "アーカイブ/サンプル.txt" && !$0.encrypted }))
+    }
+
+    func testMultibyteArchiveV4() throws {
         guard let path = Bundle.module.path(forResource: "multibyte.v4", ofType: "rar") else {
             XCTFail()
             return
         }
-        let archive = Archive(path: path)
-        XCTAssertNotNil(archive)
+        let archive = try Archive(path: path)
         let entries = try archive.entries()
         XCTAssertEqual(entries.count, 4)
         XCTAssertTrue(entries.contains(where: { $0.fileName == "アーカイブ/フォルダ/サンプル.txt" && !$0.encrypted }))
@@ -100,8 +111,7 @@ final class ArchiveTests: XCTestCase {
             XCTFail()
             return
         }
-        let archive = Archive(path: path)
-        XCTAssertNotNil(archive)
+        let archive = try Archive(path: path)
         let entries = try archive.entries()
         do {
             try archive.extract(entries[0]) { _, _ in
@@ -119,7 +129,7 @@ final class ArchiveTests: XCTestCase {
             XCTFail()
             return
         }
-        let archive = Archive(path: path, password: "password")
+        let archive = try Archive(path: path, password: "password")
         XCTAssertNotNil(archive)
         let entries = try archive.entries()
         var data: Data = Data()
@@ -134,7 +144,7 @@ final class ArchiveTests: XCTestCase {
             XCTFail()
             return
         }
-        let archive = Archive(path: path)
+        let archive = try Archive(path: path)
         XCTAssertNotNil(archive)
 
         do {
@@ -152,7 +162,7 @@ final class ArchiveTests: XCTestCase {
             XCTFail()
             return
         }
-        let archive = Archive(path: path)
+        let archive = try Archive(path: path)
         XCTAssertNotNil(archive)
         let entries = try archive.entries()
         do {
@@ -170,7 +180,7 @@ final class ArchiveTests: XCTestCase {
             XCTFail()
             return
         }
-        let archive = Archive(path: path)
+        let archive = try Archive(path: path)
         XCTAssertNotNil(archive)
         let entries = try archive.entries()
         var data: Data = Data()
@@ -187,6 +197,7 @@ final class ArchiveTests: XCTestCase {
         ("testEntriesFromWholeEncryptedArchive", testEntriesFromWholeEncryptedArchive),
         ("testExtract", testExtract),
         ("testMultibyteArchive", testMultibyteArchive),
+        ("testMultibyteArchiveV4", testMultibyteArchiveV4),
         ("testExtractEncryptedWithoutPassword", testExtractEncryptedWithoutPassword),
         ("testExtractEncryptedWithPassword", testExtractEncryptedWithPassword),
         ("testExtractBrokenHeader", testExtractBrokenHeader),
