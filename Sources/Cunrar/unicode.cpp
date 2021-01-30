@@ -27,7 +27,8 @@ bool WideToChar(const wchar *Src,char *Dest,size_t DestSize)
     RetCode=false;
 
 // wcstombs is broken in Android NDK r9.
-#elif defined(_APPLE)
+// mtgto: Use WideToUtf for Linux
+#elif defined(_APPLE) || 1
   WideToUtf(Src,Dest,DestSize);
 
 #elif defined(MBFUNCTIONS)
