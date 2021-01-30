@@ -27,7 +27,6 @@ public enum UnrarError: Error {
         case ERAR_MISSING_PASSWORD:
             return UnrarError.missingPassword
         default:
-            print("Error:", errorCode)
             return UnrarError.unknown
         }
     }

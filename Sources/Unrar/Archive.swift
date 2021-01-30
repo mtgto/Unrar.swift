@@ -41,7 +41,6 @@ public class Archive {
             case ERAR_END_ARCHIVE:
                 break loop
             default:
-                print("Error Code", result)
                 throw UnrarError.fromErrorCode(result)
             }
         } while RARProcessFile(data, RAR_SKIP, nil, nil) == ERAR_SUCCESS
