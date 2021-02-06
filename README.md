@@ -10,10 +10,13 @@ Swift library wraps unrar C++ library provided by [rarlib](https://www.rarlab.co
 - [x] Supported
   - [x] List entries of archive
   - [x] Extract to memory
-  - [x] Encrypted by password
+  - [x] Extract encrypted archive by password
+  - [x] Get comment from the archive
+  - [x] SFX archive
 - [ ] Unsupported
   - [ ] Extract to file
   - [ ] Multi-Volume
+  - [ ] Get comment from archive entries
 
 ## Usage
 
@@ -21,6 +24,7 @@ Swift library wraps unrar C++ library provided by [rarlib](https://www.rarlab.co
 import Unrar
 
 let archive = Archive(filePath: "/path/to/archive.rar")
+let comment = try archive.comment()
 let entries = try archive.entries()
 let extractedData = try archive.extract(entries[0])
 ```

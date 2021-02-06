@@ -1,5 +1,16 @@
 CHANGELOG
 ====
+## v0.3.0 (2021-02-07)
+
+### Added
+
+- Add method to get archive comment
+
+### Changed
+
+- Delete debug print
+- Support 2GB+ archive
+
 ## v0.2.0 (2021-01-09)
 
 ### Added
