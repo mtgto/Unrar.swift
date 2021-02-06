@@ -27,6 +27,7 @@ final class ArchiveTests: XCTestCase {
             return
         }
         let archive = try Archive(path: path)
+        XCTAssertEqual(try archive.comment(), "")
         XCTAssertFalse(archive.isVolume)
         XCTAssertFalse(archive.hasComment)
         XCTAssertFalse(archive.isHeaderEncrypted)
@@ -92,6 +93,7 @@ final class ArchiveTests: XCTestCase {
         XCTAssertEqual(entries.count, 4)
         XCTAssertTrue(entries.contains(where: { $0.fileName == "アーカイブ/フォルダ/サンプル.txt" && !$0.encrypted }))
         XCTAssertTrue(entries.contains(where: { $0.fileName == "アーカイブ/サンプル.txt" && !$0.encrypted }))
+        XCTAssertEqual(try archive.comment().count, 0x40000)
     }
 
     func testMultibyteArchiveV4() throws {

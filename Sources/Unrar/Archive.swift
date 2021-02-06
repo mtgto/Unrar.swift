@@ -9,7 +9,7 @@ public class Archive {
     public let fileURL: URL
     public let password: String?
     public let isVolume: Bool
-    public let hasComment: Bool
+    public let hasComment: Bool  // maximum comment size = 0x40000 (MAXCMTSIZE in rardefs.hpp)
     public let isHeaderEncrypted: Bool
     public let isFirstVolume: Bool
 
@@ -24,6 +24,7 @@ public class Archive {
         var flags = RAROpenArchiveDataEx()
         flags.OpenMode = UInt32(RAR_OM_LIST)
         flags.CmtBuf = nil
+        flags.CmtBufW = nil
         flags.CmtBufSize = 0
 
         guard let data = Archive.open(fileURL: fileURL, password: password, flags: &flags) else {
@@ -46,6 +47,7 @@ public class Archive {
         var flags = RAROpenArchiveDataEx()
         flags.OpenMode = UInt32(RAR_OM_LIST)
         flags.CmtBuf = nil
+        flags.CmtBufW = nil
         flags.CmtBufSize = 0
 
         var header = RARHeaderDataEx()
@@ -71,6 +73,30 @@ public class Archive {
         } while RARProcessFile(data, RAR_SKIP, nil, nil) == ERAR_SUCCESS
 
         return entries
+    }
+
+    public func comment() throws -> String {
+        var flags = RAROpenArchiveDataEx()
+        flags.OpenMode = UInt32(RAR_OM_LIST)
+        let buffer = UnsafeMutablePointer<Int8>.allocate(capacity: 0x40001)
+        flags.CmtBuf = buffer
+        flags.CmtBufW = nil
+        flags.CmtBufSize = 0x40001
+
+        guard let data = Archive.open(fileURL: self.fileURL, password: self.password, flags: &flags) else {
+            throw UnrarError.badArchive
+        }
+        defer {
+            RARCloseArchive(data)
+        }
+        if flags.OpenResult != ERAR_SUCCESS {
+            throw UnrarError.badArchive
+        }
+        if flags.CmtState == ERAR_SMALL_BUF {
+            // TODO: Update comment buffer size
+            throw UnrarError.unknownFormat
+        }
+        return String(cString: buffer)
     }
 
     class Callback {
