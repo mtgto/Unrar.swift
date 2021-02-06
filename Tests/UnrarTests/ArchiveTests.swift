@@ -190,6 +190,21 @@ final class ArchiveTests: XCTestCase {
         XCTAssertEqual(data.count, 1282)
     }
 
+    func testExtractSfx() throws {
+        guard let path = Bundle.module.path(forResource: "sfx", ofType: "exe") else {
+            XCTFail()
+            return
+        }
+        let archive = try Archive(path: path)
+        XCTAssertNotNil(archive)
+        let entries = try archive.entries()
+        var data: Data = Data()
+        try archive.extract(entries[0]) { receivedData, progress in
+            data.append(receivedData)
+        }
+        XCTAssertEqual(data.count, 15)
+    }
+
     static var allTests = [
         ("testOpenNotExistsArchive", testOpenNotExistsArchive),
         ("testEntries", testEntries),
@@ -203,5 +218,6 @@ final class ArchiveTests: XCTestCase {
         ("testExtractBrokenHeader", testExtractBrokenHeader),
         ("testExtractBadCRC", testExtractBadCRC),
         ("testBlake2Hash", testBlake2Hash),
+        ("testExtractSfx", testExtractSfx),
     ]
 }
