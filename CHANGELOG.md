@@ -1,5 +1,12 @@
 CHANGELOG
 ====
+## v0.3.1 (2021-03-06)
+
+### Changed
+
+- Update unrar to v6.0.4
+- Add tests for volume archive
+
 ## v0.3.0 (2021-02-07)
 
 ### Added

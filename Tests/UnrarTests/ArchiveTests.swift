@@ -207,6 +207,34 @@ final class ArchiveTests: XCTestCase {
         XCTAssertEqual(data.count, 15)
     }
 
+    func testVolume() throws {
+        guard let path = Bundle.module.path(forResource: "volumes.part1", ofType: "rar") else {
+            XCTFail()
+            return
+        }
+        let archive = try Archive(path: path)
+        XCTAssertNotNil(archive)
+        XCTAssertTrue(archive.isVolume)
+        XCTAssertTrue(archive.isFirstVolume)
+        let entries = try archive.entries()
+        var data: Data = Data()
+        try archive.extract(entries[0]) { receivedData, progress in
+            data.append(receivedData)
+        }
+        XCTAssertEqual(data.count, 179439)
+    }
+
+    func testVolumeNotFirst() throws {
+        guard let path = Bundle.module.path(forResource: "volumes.part2", ofType: "rar") else {
+            XCTFail()
+            return
+        }
+        let archive = try Archive(path: path)
+        XCTAssertNotNil(archive)
+        XCTAssertTrue(archive.isVolume)
+        XCTAssertFalse(archive.isFirstVolume)
+    }
+
     static var allTests = [
         ("testOpenNotExistsArchive", testOpenNotExistsArchive),
         ("testEntries", testEntries),
@@ -221,5 +249,7 @@ final class ArchiveTests: XCTestCase {
         ("testExtractBadCRC", testExtractBadCRC),
         ("testBlake2Hash", testBlake2Hash),
         ("testExtractSfx", testExtractSfx),
+        ("testVolume", testVolume),
+        ("testVolumeNotFirst", testVolumeNotFirst),
     ]
 }
