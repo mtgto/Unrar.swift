@@ -1,5 +1,10 @@
 CHANGELOG
 ====
+
+## v0.3.2 (2021-03-27)
+
+- Fix a bug `Archive.extract` creates a folder/file in current directory.
+
 ## v0.3.1 (2021-03-06)
 
 ### Changed

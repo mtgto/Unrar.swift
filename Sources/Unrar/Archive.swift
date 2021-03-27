@@ -159,7 +159,7 @@ public class Archive {
                 // compare fileName
                 if Entry(header) == entry {
                     RARSetCallback(data, callback, Int(bitPattern: OpaquePointer(handlerPointer)))
-                    let result = RARProcessFile(data, RAR_EXTRACT, nil, nil)
+                    let result = RARProcessFile(data, RAR_OM_EXTRACT, nil, nil)
                     RARSetCallback(data, nil, 0)
                     if result != ERAR_SUCCESS {
                         throw UnrarError.fromErrorCode(result)
