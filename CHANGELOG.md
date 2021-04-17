@@ -1,6 +1,10 @@
 CHANGELOG
 ====
 
+## v0.3.3 (2021-04-17)
+
+- Update unrar to v6.0.5
+
 ## v0.3.2 (2021-03-27)
 
 - Fix a bug `Archive.extract` creates a folder/file in current directory.
