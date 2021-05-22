@@ -1,6 +1,10 @@
 CHANGELOG
 ====
 
+## v0.3.4 (2021-05-22)
+
+- Update unrar to v6.0.6
+
 ## v0.3.3 (2021-04-17)
 
 - Update unrar to v6.0.5
