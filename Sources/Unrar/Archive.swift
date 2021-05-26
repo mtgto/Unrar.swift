@@ -150,6 +150,7 @@ public class Archive {
             throw UnrarError.badArchive
         }
         defer {
+            Unmanaged<Callback>.fromOpaque(handlerPointer).release()
             RARCloseArchive(data)
         }
         loop: repeat {
