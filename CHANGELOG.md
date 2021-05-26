@@ -1,6 +1,10 @@
 CHANGELOG
 ====
 
+## v0.3.5 (2021-05-26)
+
+- Fix memory leak (#2)
+
 ## v0.3.4 (2021-05-22)
 
 - Update unrar to v6.0.6
