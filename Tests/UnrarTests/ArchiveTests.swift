@@ -21,6 +21,21 @@ final class ArchiveTests: XCTestCase {
         }
     }
 
+    func testOpenNotExistsArchiveWithPassword() {
+        guard let path = Bundle.module.path(forResource: "test", ofType: "rar") else {
+            XCTFail()
+            return
+        }
+        do {
+            _ = try Archive(path: path + ".not.exists", password: "dummy")
+            XCTFail()
+        } catch UnrarError.badArchive {
+            // ok
+        } catch {
+            XCTFail()
+        }
+    }
+
     func testEntries() throws {
         guard let path = Bundle.module.path(forResource: "test", ofType: "rar") else {
             XCTFail()
@@ -237,6 +252,7 @@ final class ArchiveTests: XCTestCase {
 
     static var allTests = [
         ("testOpenNotExistsArchive", testOpenNotExistsArchive),
+        ("testOpenNotExistsArchiveWithPassword", testOpenNotExistsArchiveWithPassword),
         ("testEntries", testEntries),
         ("testEntriesFromEncryptedArchive", testEntriesFromEncryptedArchive),
         ("testEntriesFromWholeEncryptedArchive", testEntriesFromWholeEncryptedArchive),

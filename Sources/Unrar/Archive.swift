@@ -189,10 +189,14 @@ public class Archive {
     }
 
     private static func open(fileURL: URL, password: String?, flags: inout RAROpenArchiveDataEx) -> UnsafeMutableRawPointer? {
-        let ptr = fileURL.path.utf8CString.withUnsafeBufferPointer({ (ptr) -> UnsafeMutableRawPointer? in
-            flags.ArcName = UnsafeMutablePointer(mutating: ptr.baseAddress)
-            return UnsafeMutableRawPointer(RAROpenArchiveEx(&flags))
-        })
+        guard
+            let ptr = fileURL.path.utf8CString.withUnsafeBufferPointer({ (ptr) -> UnsafeMutableRawPointer? in
+                flags.ArcName = UnsafeMutablePointer(mutating: ptr.baseAddress)
+                return UnsafeMutableRawPointer(RAROpenArchiveEx(&flags))
+            })
+        else {
+            return nil
+        }
         if let password = password {
             password.utf8CString.withUnsafeBufferPointer({ (passwordPtr) -> Void in
                 RARSetPassword(ptr, UnsafeMutablePointer(mutating: passwordPtr.baseAddress))
