@@ -1,5 +1,9 @@
-CHANGELOG
-====
+# CHANGELOG
+
+## v0.3.6 (2021-08-28)
+
+- Update unrar to v6.0.7
+- Fix `Archive.open` causes crash with broken archive and non-empty password
 
 ## v0.3.5 (2021-05-26)
 
