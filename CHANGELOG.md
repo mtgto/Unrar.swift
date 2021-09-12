@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.3.7 (2021-09-12)
+
+- Fix `Package.swift` excludes non exist files (#3)
+
 ## v0.3.6 (2021-08-28)
 
 - Update unrar to v6.0.7
