@@ -96,6 +96,9 @@ public class Archive {
             // TODO: Update comment buffer size
             throw UnrarError.unknownFormat
         }
+        if flags.Flags & UInt32(ROADF_COMMENT) == 0 {
+            return ""
+        }
         return String(cString: buffer)
     }
 
