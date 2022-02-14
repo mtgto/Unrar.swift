@@ -12,11 +12,12 @@ Swift library wraps unrar C++ library provided by [rarlib](https://www.rarlab.co
   - [x] Extract to memory
   - [x] Extract encrypted archive by password
   - [x] Get comment from the archive
+  - [x] Get comment from archive entries
   - [x] SFX archive
 - [ ] Unsupported
   - [ ] Extract to file
+  - [ ] Extract from archive on the memory
   - [ ] Multi-Volume
-  - [ ] Get comment from archive entries
 
 ## Usage
 

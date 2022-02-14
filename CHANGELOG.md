@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.3.8 (2022-02-14)
+
+- Update unrar to v6.1.4
+- Fix Archive#comment crashes if the archive does not have any comment
+
 ## v0.3.7 (2021-09-12)
 
 - Fix `Package.swift` excludes non exist files (#3)
