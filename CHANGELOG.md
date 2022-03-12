@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.3.9 (2022-03-13)
+
+- Update unrar to v6.1.6
+
 ## v0.3.8 (2022-02-14)
 
 - Update unrar to v6.1.4
