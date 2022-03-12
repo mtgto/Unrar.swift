@@ -20,7 +20,7 @@ let package = Package(
             exclude: [
                 "readme.txt", "license.txt", "acknow.txt",
                 "arccmt.cpp", "blake2s_sse.cpp", "blake2sp.cpp", "cmdfilter.cpp", "cmdmix.cpp", "coder.cpp", "crypt1.cpp", "crypt2.cpp",
-                "crypt3.cpp", "crypt5.cpp", "hardlinks.cpp", "log.cpp", "model.cpp", "rarpch.cpp", "recvol3.cpp", "recvol5.cpp", "suballoc.cpp",
+                "crypt3.cpp", "crypt5.cpp", "hardlinks.cpp", "isnt.cpp", "log.cpp", "model.cpp", "rarpch.cpp", "recvol3.cpp", "recvol5.cpp", "suballoc.cpp",
                 "threadmisc.cpp", "uicommon.cpp", "uiconsole.cpp", "uisilent.cpp", "ulinks.cpp", "unpack15.cpp", "unpack20.cpp", "unpack30.cpp",
                 "unpack50.cpp", "unpack50frag.cpp", "unpack50mt.cpp", "unpackinline.cpp", "uowners.cpp", "win32acl.cpp", "win32lnk.cpp",
                 "win32stm.cpp",
@@ -39,7 +39,7 @@ let package = Package(
                 "filestr.cpp", "scantree.cpp", "dll.cpp", "qopen.cpp",
                 // OBJECTS
                 "rar.cpp", "strlist.cpp", "strfn.cpp", "pathfn.cpp", "smallfn.cpp", "global.cpp", "file.cpp", "filefn.cpp", "filcreat.cpp",
-                "archive.cpp", "arcread.cpp", "unicode.cpp", "system.cpp", "isnt.cpp", "crypt.cpp", "crc.cpp", "rawread.cpp", "encname.cpp",
+                "archive.cpp", "arcread.cpp", "unicode.cpp", "system.cpp", "crypt.cpp", "crc.cpp", "rawread.cpp", "encname.cpp",
                 "resource.cpp", "match.cpp", "timefn.cpp", "rdwrfn.cpp", "consio.cpp", "options.cpp", "errhnd.cpp", "rarvm.cpp", "secpassword.cpp",
                 "rijndael.cpp", "getbits.cpp", "sha1.cpp", "sha256.cpp", "blake2s.cpp", "hash.cpp", "extinfo.cpp", "extract.cpp", "volume.cpp",
                 "list.cpp", "find.cpp", "unpack.cpp", "headers.cpp", "threadpool.cpp", "rs16.cpp", "cmddata.cpp", "ui.cpp",
