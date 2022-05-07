@@ -6,6 +6,10 @@ import PackageDescription
 
 let package = Package(
     name: "Unrar",
+    platforms: [
+        .iOS(.v12),
+        .macOS(.v10_15)
+    ],
     products: [
         .library(
             name: "Unrar",
@@ -15,6 +19,7 @@ let package = Package(
         .target(
             name: "Unrar",
             dependencies: ["Cunrar"]),
+        // .binaryTarget(name: "Cunrar", url: "https://github.com/mtgto/ExampleSwiftPackage/releases/download/x.x.x/Cunrar.zip", checksum: ""),
         .target(
             name: "Cunrar",
             exclude: [
@@ -35,6 +40,7 @@ let package = Package(
                 "strfn.hpp", "unicode.hpp",
             ],
             sources: [
+                "include/unrar.h",
                 // LIB_OBJ
                 "filestr.cpp", "scantree.cpp", "dll.cpp", "qopen.cpp",
                 // OBJECTS
@@ -44,6 +50,7 @@ let package = Package(
                 "rijndael.cpp", "getbits.cpp", "sha1.cpp", "sha256.cpp", "blake2s.cpp", "hash.cpp", "extinfo.cpp", "extract.cpp", "volume.cpp",
                 "list.cpp", "find.cpp", "unpack.cpp", "headers.cpp", "threadpool.cpp", "rs16.cpp", "cmddata.cpp", "ui.cpp",
             ],
+            publicHeadersPath: "include",
             cSettings: [
                 .define("RARDLL"),
                 .define("_FILE_OFFSET_BITS", to: "64"),

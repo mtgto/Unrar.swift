@@ -3,3 +3,8 @@
 /Packages
 /*.xcodeproj
 xcuserdata/
+
+# xcframework
+/build/
+/Cunrar.xcframework/
+/Cunrar.zip
