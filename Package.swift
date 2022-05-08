@@ -43,7 +43,7 @@ let cunrar = Target.target(
             ]
         )
 #else
-let cunrar = Target.binaryTarget(name: "Cunrar", url: "https://github.com/mtgto/Unrar.swift/releases/download/0.3.9/Cunrar.zip", checksum: "2d819e9218d9292be9f2ebcb1a3b7bd21250d165cc8b6869a1b1ba38144df4db")
+let cunrar = Target.binaryTarget(name: "Cunrar", url: "https://github.com/mtgto/Unrar.swift/releases/download/0.2.2/Cunrar.zip", checksum: "a8baa5850c5ba21e1b88e57cc0eeb6957c97f2e5fdb7ed339fb18813ed1c22c4")
 #endif
 
 let package = Package(
