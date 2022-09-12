@@ -14,8 +14,10 @@ public struct Entry: Equatable {
     public let modified: Date
 
     init(_ header: RARHeaderDataEx) {
-        let _header: RARHeaderDataEx = header
-        self.fileName = String(_header.FileName.0.description.unicodeScalars)
+        var _header: RARHeaderDataEx = header
+        self.fileName = withUnsafePointer(to: &_header.FileName.0) { ptr -> String in
+            return String(cString: UnsafeRawPointer(ptr).assumingMemoryBound(to: CChar.self))
+        }
         self.comment = _header.CmtBuf != nil ? String(cString: _header.CmtBuf) : nil
         self.uncompressedSize = UInt64(header.UnpSizeHigh) << 32 | UInt64(header.UnpSize)
         self.compressedSize = UInt64(header.PackSizeHigh) << 32 | UInt64(header.PackSize)
