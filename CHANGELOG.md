@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.3.12 (2023-03-07)
+
+- Update unrar to v6.2.6
+
 ## v0.3.11 (2022-09-18)
 
 - Fixes crash encountered in iOS 16 ([#6](https://github.com/mtgto/Unrar.swift/pull/6)) by [@simonaplin](https://github.com/simonaplin)
