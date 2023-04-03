@@ -31,7 +31,10 @@ public struct Entry: Equatable {
     private static func date(from time: UInt64) -> Date {
         // Prevent arithmetic overflow
         let result = (time / 10_000_000).subtractingReportingOverflow(11_644_473_600)
-        guard !result.overflow else { return Date(timeIntervalSince1970: 0) }
-        return Date(timeIntervalSince1970: TimeInterval(result.partialValue))
+        if result.overflow {
+            return Date(timeIntervalSince1970: 0)
+        } else {
+            return Date(timeIntervalSince1970: TimeInterval(result.partialValue))
+        }
     }
 }
