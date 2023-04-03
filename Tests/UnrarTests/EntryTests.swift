@@ -14,7 +14,7 @@ final class EntryTests: XCTestCase {
         let entry = Entry(header)
 
         // Then
-        XCTAssertEqual(entry.fileName, "")
+        XCTAssertEqual(entry.modified, Date(timeIntervalSince1970: 0))
     }
 
     static var allTests = [
