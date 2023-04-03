@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.3.13 (2023-04-04)
+
+- Fixes crashes that the archive has broken time header ([#7](https://github.com/mtgto/Unrar.swift/pull/7)) by [@fillito](https://github.com/fillito)
+
 ## v0.3.12 (2023-03-07)
 
 - Update unrar to v6.2.6
