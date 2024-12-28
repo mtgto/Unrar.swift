@@ -5,7 +5,7 @@ import Cunrar
 import Foundation
 
 // NOTE: This class is not thread safe.
-public class Archive {
+public struct Archive: Sendable {
     public let fileURL: URL
     public let password: String?
     public let isVolume: Bool
@@ -13,7 +13,7 @@ public class Archive {
     public let isHeaderEncrypted: Bool
     public let isFirstVolume: Bool
 
-    public convenience init(path: String, password: String? = nil) throws {
+    public init(path: String, password: String? = nil) throws {
         try self.init(fileURL: URL(fileURLWithPath: path), password: password)
     }
 

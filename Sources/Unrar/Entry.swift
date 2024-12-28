@@ -4,7 +4,7 @@
 import Cunrar
 import Foundation
 
-public struct Entry: Equatable {
+public struct Entry: Equatable, Sendable {
     public let fileName: String  // path
     public let comment: String?
     public let uncompressedSize: UInt64
