@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.4.0 (2024-12-30)
+
+- Add Sendable to Archive and Entry
+
 ## v0.3.16 (2024-05-15)
 
 - Update unrar to v7.01 (2024-05-12)
