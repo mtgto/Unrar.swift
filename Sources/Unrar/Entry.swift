@@ -12,6 +12,8 @@ public struct Entry: Equatable, Sendable {
     public let encrypted: Bool
     public let directory: Bool
     public let modified: Date
+    public let creation: Date
+    public let crc32: UInt32
 
     init(_ header: RARHeaderDataEx) {
         var _header: RARHeaderDataEx = header
@@ -22,6 +24,8 @@ public struct Entry: Equatable, Sendable {
         self.encrypted = header.Flags & UInt32(RHDF_ENCRYPTED) != 0
         self.directory = header.Flags & UInt32(RHDF_DIRECTORY) != 0
         self.modified = Entry.date(from: UInt64(header.MtimeHigh) << 32 | UInt64(header.MtimeLow))
+        creation = Entry.date(from: UInt64(header.CtimeHigh) << 32 | UInt64(header.CtimeLow))
+        crc32 = header.FileCRC
     }
 
     public static func == (lhs: Entry, rhs: Entry) -> Bool {
