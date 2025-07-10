@@ -5,14 +5,18 @@ import Cunrar
 import Foundation
 
 public struct Entry: Equatable, Sendable {
-    public let fileName: String  // path
+    /// Path
+    public let fileName: String
     public let comment: String?
     public let uncompressedSize: UInt64
     public let compressedSize: UInt64
     public let encrypted: Bool
     public let directory: Bool
+    /// Modification Time (mtime)
     public let modified: Date
+    /// Creation Time (ctime)
     public let creation: Date
+    /// CRC32 value of uncompressed data
     public let crc32: UInt32
 
     init(_ header: RARHeaderDataEx) {
@@ -24,8 +28,8 @@ public struct Entry: Equatable, Sendable {
         self.encrypted = header.Flags & UInt32(RHDF_ENCRYPTED) != 0
         self.directory = header.Flags & UInt32(RHDF_DIRECTORY) != 0
         self.modified = Entry.date(from: UInt64(header.MtimeHigh) << 32 | UInt64(header.MtimeLow))
-        creation = Entry.date(from: UInt64(header.CtimeHigh) << 32 | UInt64(header.CtimeLow))
-        crc32 = header.FileCRC
+        self.creation = Entry.date(from: UInt64(header.CtimeHigh) << 32 | UInt64(header.CtimeLow))
+        self.crc32 = header.FileCRC
     }
 
     public static func == (lhs: Entry, rhs: Entry) -> Bool {

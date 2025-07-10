@@ -52,6 +52,8 @@ final class ArchiveTests: XCTestCase {
         XCTAssertEqual(entries[0].fileName, "README.md")
         XCTAssertEqual(entries[0].uncompressedSize, 40)
         XCTAssertEqual(entries[0].modified, Date(timeIntervalSince1970: 1_609_644_822))
+        XCTAssertEqual(entries[0].creation, Date(timeIntervalSince1970: 0))
+        XCTAssertEqual(entries[0].crc32, 0x7A06B557)
     }
 
     func testEntriesFromEncryptedArchive() throws {
