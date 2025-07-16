@@ -165,12 +165,14 @@ final class ArchiveInitializationTests: XCTestCase {
     }
 
     func testCommentedArchiveProperties() throws {
-        guard let path = getTestArchivePath("commented.rar") else {
+        // rar archive may not add commented to rar file (some time)
+        guard let path = Bundle.module.path(forResource: "commented", ofType: "rar") else {
             XCTFail("Could not find commented.rar test file")
             return
         }
 
         let archive = try Archive(path: path)
+        print(">>\(archive)")
         XCTAssertTrue(archive.hasComment)
         let comment = try archive.comment()
         XCTAssertFalse(comment.isEmpty)

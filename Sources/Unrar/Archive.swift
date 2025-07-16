@@ -9,6 +9,7 @@ import Foundation
 public let UNRAR_MAXPATHSIZE: Int = 0x10000
 public let UNRAR_MAXMEMORYEXTRASIZE: UInt64 = 100 * 1024 * 1024 // 100MB
 public let UNRAR_MAXPASSWORD_RAR: Int = 128
+public let ERAR_SUCCESS: Int32 = 0
 
 /// A Swift wrapper around the unrar library.
 public struct Archive: Sendable, CustomDebugStringConvertible {
@@ -422,9 +423,10 @@ public struct Archive: Sendable, CustomDebugStringConvertible {
         ///   - pendingVolumes: An array of paths to remaining volumes.
         ///   - password: The password for the archive.
         ///   - action: The `ExtraAction` to perform.
-        init(entry: Entry, progress: Progress, pendingVolumes: [String], password: String?, action: ExtraAction) {
+        init(entry: Entry, progress: Progress?, pendingVolumes: [String], password: String?, action: ExtraAction) {
             self.entry = entry
-            self.progress = progress
+            self.progress = progress ?? Progress(totalUnitCount: Int64(entry.uncompressedSize))
+            self.progress.totalUnitCount = Int64(entry.uncompressedSize)
             self.pendingVolumes = pendingVolumes
             self.password = password
             self.action = action
@@ -450,7 +452,7 @@ public struct Archive: Sendable, CustomDebugStringConvertible {
                 let data = Data(bytes: ptr, count: length)
                 return handle(entry, data)
             }
-            return ERR_SUCCESS
+            return ERAR_SUCCESS
         }
     }
 
@@ -483,11 +485,10 @@ public struct Archive: Sendable, CustomDebugStringConvertible {
         rarHandler: UnsafeMutableRawPointer, volumes: [String], password: String?, progress: Progress?, action: (Entry) throws -> ExtraAction?
     ) throws {
         var header = RARHeaderDataEx()
-        let progress = progress ?? Progress()
+        // var progress = progress ?? Progress(totalUnitCount:0)
 
         loop: repeat {
             let result = RARReadHeaderEx(rarHandler, &header)
-            progress.totalUnitCount = Int64(header.UnpSizeHigh) << 32 | Int64(header.UnpSize)
             switch result {
             case ERAR_SUCCESS:
                 let entry = Entry(header)
@@ -532,7 +533,7 @@ public struct Archive: Sendable, CustomDebugStringConvertible {
                                     if context.progress.isCancelled {
                                         return -1 // User cancelled operation
                                     }
-                                    if ret != ERR_SUCCESS {
+                                    if ret != ERAR_SUCCESS {
                                         context.error = ret
                                         return -1
                                     }
@@ -573,7 +574,9 @@ public struct Archive: Sendable, CustomDebugStringConvertible {
                                 return -1 // Return error, abort operation
                             }
                         }
-                        progress.fileURL = URL(fileURLWithPath: entry.fileName)
+                        #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
+                            progress?.fileURL = URL(fileURLWithPath: entry.fileName)
+                        #endif
                         RARSetCallback(rarHandler, callback, Int(bitPattern: OpaquePointer(handlerPointer)))
                         if let path = fullPath {
                             var procResult: Int32 = 0
@@ -702,14 +705,15 @@ public struct Archive: Sendable, CustomDebugStringConvertible {
         if !fileURL.isFileURL {
             return nil
         }
-        /// Request access to security-scoped resource
-        let need = fileURL.startAccessingSecurityScopedResource()
-        defer {
-            if need {
-                fileURL.stopAccessingSecurityScopedResource()
+        #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
+            /// Request access to security-scoped resource
+            let need = fileURL.startAccessingSecurityScopedResource()
+            defer {
+                if need {
+                    fileURL.stopAccessingSecurityScopedResource()
+                }
             }
-        }
-
+        #endif
         // First, check if the file exists
         guard FileManager.default.fileExists(atPath: fileURL.path) else {
             return nil

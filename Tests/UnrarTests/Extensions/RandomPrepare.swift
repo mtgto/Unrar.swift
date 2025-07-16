@@ -2,7 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 import Foundation
-import Security // For SecRandomCopyBytes, a cryptographically secure random number generator
+
+#if os(Linux)
+import Glibc
+#endif
 
 // MARK: - Helper Functions
 
@@ -47,15 +50,48 @@ func generateRandomAlphaNumericText(length: Int, characters: String = "abcdefghi
 /// 生成指定长度的随机二进制数据
 /// - Parameter length: 目标数据长度 (字节数)
 /// - Returns: 包含随机字节的 Data 对象
+
 func generateRandomBinaryData(length: Int) -> Data {
     var data = Data(count: length)
+    
+#if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
     _ = data.withUnsafeMutableBytes { (buffer: UnsafeMutableRawBufferPointer) -> OSStatus in
         // Using SecRandomCopyBytes for cryptographically secure random data
         SecRandomCopyBytes(kSecRandomDefault, length, buffer.baseAddress!)
     }
+#elseif os(Linux)
+    // Linux implementation using /dev/urandom
+    data.withUnsafeMutableBytes { (buffer: UnsafeMutableRawBufferPointer) in
+        guard let baseAddress = buffer.baseAddress else { return }
+        
+        // Try to open /dev/urandom for cryptographically secure random data
+        let fd = open("/dev/urandom", O_RDONLY)
+        if fd >= 0 {
+            defer { close(fd) }
+            let bytesRead = read(fd, baseAddress, length)
+            if bytesRead == length {
+                return // Successfully read from /dev/urandom
+            }
+        }
+        
+        // Fallback to arc4random_buf if /dev/urandom fails
+        // Note: arc4random_buf is available on most Linux systems
+        //        arc4random_buf(baseAddress, length) github docker build fail
+        
+        // Fallback to using random() with srand() if /dev/urandom fails
+        // Initialize random seed if not already done
+        srand(UInt32(time(nil)))
+        
+        // Fill buffer with random bytes
+        let bytes = baseAddress.bindMemory(to: UInt8.self, capacity: length)
+        for i in 0..<length {
+            bytes[i] = UInt8(random() & 0xFF)
+        }
+    }
+#endif
+    
     return data
 }
-
 func mkdirs(url: URL) {
     let parent = url.deletingLastPathComponent()
     if !FileManager.default.fileExists(atPath: parent.path) {

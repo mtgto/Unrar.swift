@@ -56,7 +56,13 @@ func prepareRarFile(_ tempDir: URL) {
             return nil
         }
         _ = try copy("unrar", "")
-        let rarCmd = try copy("rar", "")
+        #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
+            let rarCmd = try copy("rar", "")
+        #else
+            #if os(Linux)
+                let rarCmd = try copy("rar-Linux", "")
+            #endif
+        #endif
         prepareFiles(url: tempDir.appendingPathComponent("Tests/test-source"))
         createRarFiles(rarCommandPath: rarCmd!.path, archivesOutputDirectory: tempDir.appendingPathComponent("Tests/UnrarTests/fixture-new").path, currentScriptDirectory: tempDir.appendingPathComponent("Tests/test-source").path)
     } catch {
