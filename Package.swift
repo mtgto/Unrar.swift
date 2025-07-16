@@ -1,4 +1,4 @@
-// swift-tools-version:5.8
+// swift-tools-version:5.3
 // SPDX-FileCopyrightText: 2021 mtgto <hogerappa@gmail.com>
 // SPDX-License-Identifier: MIT
 
@@ -54,7 +54,7 @@ let package = Package(
             name: "UnrarTests",
             dependencies: ["Unrar"],
             resources: [.process("fixture"),.process("tool")],
-        )
+        ),
     ],
     cxxLanguageStandard: .cxx11
 )
