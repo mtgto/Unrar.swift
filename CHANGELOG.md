@@ -1,4 +1,8 @@
 # CHANGELOG
+## v0.5.1 (2025-08-01)
+
+- Update unrar to v7.13 (2025-07-28)
+
 ## v0.5.0 (2025-07-10)
 
 - Add creation and crc32 properties to Entry ([#10](https://github.com/mtgto/Unrar.swift/pull/10)) by [@enefry](https://github.com/enefry)
