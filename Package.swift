@@ -53,7 +53,8 @@ let package = Package(
         .testTarget(
             name: "UnrarTests",
             dependencies: ["Unrar"],
-            resources: [.process("fixture")]),
+            resources: [.process("fixture"),.process("tool")]
+        ),
     ],
     cxxLanguageStandard: .cxx11
 )
