@@ -24,7 +24,7 @@ Swift library wraps unrar C++ library provided by [rarlib](https://www.rarlab.co
 ```swift
 import Unrar
 
-let archive = try Archive(filePath: "/path/to/archive.rar")
+let archive = try Archive(path: "/path/to/archive.rar")
 let comment = try archive.comment()
 let entries = try archive.entries()
 let extractedData = try archive.extract(entries[0])
