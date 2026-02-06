@@ -1,4 +1,8 @@
 # CHANGELOG
+## v0.5.2 (2026-02-06)
+
+- Update unrar to v7.20 (2026-02-01)
+
 ## v0.5.1 (2025-08-01)
 
 - Update unrar to v7.13 (2025-07-28)
