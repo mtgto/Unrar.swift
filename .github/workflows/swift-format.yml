@@ -17,7 +17,7 @@ jobs:
           # Full git history is needed to get a proper list of changed files
           fetch-depth: 0
       - name: Lint
-        uses: mtgto/swift-format-action@main
+        uses: mtgto/swift-format-action@v1
         with:
           # Please comment out if you won't specify configuration file
           configuration_file: .swift-format
