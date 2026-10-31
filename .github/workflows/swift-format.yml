@@ -12,12 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.1.0
         with:
           # Full git history is needed to get a proper list of changed files
           fetch-depth: 0
       - name: Lint
-        uses: mtgto/swift-format-action@v1.0.0
+        uses: mtgto/swift-format-action@v1.1.0
         with:
           # Please comment out if you won't specify configuration file
           configuration_file: .swift-format
