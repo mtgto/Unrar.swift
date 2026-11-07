@@ -5,7 +5,7 @@ version: 'v0.0.3'
 workflows:
     '.github/workflows/swift-format.yml':
         - 'actions/checkout@v7.0.1'
-        - 'mtgto/swift-format-action@v1.1.0'
+        - 'mtgto/swift-format-action@v1.1.1'
     '.github/workflows/swift.yml':
         - 'actions/checkout@v7.0.1'
 dependencies:
@@ -14,8 +14,8 @@ dependencies:
         commit: 'sha1-3d3c42e5aac5ba805825da76410c181273ba90b1'
         owner_id: 44036562
         repo_id: 197814629
-    'mtgto/swift-format-action@v1.1.0':
-        ref: 'v1.1.0'
-        commit: 'sha1-eb0abf9f48f43986df42a788409ac75f66a19bbc'
+    'mtgto/swift-format-action@v1.1.1':
+        ref: 'v1.1.1'
+        commit: 'sha1-3d4c30190807f8439bbf74015217603c1f18870d'
         owner_id: 1213991
         repo_id: 327337772
